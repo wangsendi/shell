@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 ##author：wangsendi
 ##url：https://www.yuque.com/wangsendi
-###用于网段扫描，局域网端口扫描
+###用于网段扫描，局域网开放端口扫描
 ####use : curl -s https://raw.githubusercontent.com/wangsendi/shell/main/net/nmap-scan.sh |bash -s 10.11.0.0/16
 function scan_subnet() {
     local subnet=$1
