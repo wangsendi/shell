@@ -12,7 +12,7 @@ __dl() {
 __main() {
     __dl
     if ! command -v perccli64 &>/dev/null; then
-        _os=$(grep -E 'debian|centos' -o /etc/os-release | uniq)
+        _os=$(grep -E 'debian|centos|ubuntu' -o /etc/os-release | uniq)
         case "${_os}" in
         centos)
             rpm -qa | grep perccli | xargs rpm -e
@@ -20,8 +20,10 @@ __main() {
             rpm -i /tmp/perccli/*.rpm
             ln -s /opt/MegaRAID/perccli/perccli64 /usr/local/bin/
             ;;
-        debian)
+        debian | ubuntu)
+            dpkg-query -W '*perccli*' | xargs dpkg --remove
             dpkg -i /tmp/perccli/*.deb
+            ln -s /opt/MegaRAID/perccli/perccli64 /usr/local/bin/
             ;;
         *)
             echo "not found os "
