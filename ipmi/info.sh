@@ -13,10 +13,15 @@ function get_ipmi_device_info() {
     ipmitool mc info | grep -E 'Manufacturer Name|Device ID|Firmware Revision'
 }
 
-# 函数：获取传感器列表的关键信息
-function get_ipmi_sensors() {
-    echo "Critical IPMI Sensors Status:"
-    ipmitool sensor list | awk -F'|' '$4 ~ /ok/ && ($2 ~ /degrees C/ || $2 ~ /Volts/ || $2 ~ /Watts/ || $2 ~ /Amps/)' | cut -d'|' -f1,2
+# 函数：获取所有温度传感器的信息
+function get_ipmi_temperature_sensors() {
+    echo "IPMI Temperature Sensors:"
+    ipmitool sensor list | awk -F'|' '$3 ~ /degrees C/ {print $1, $2, $4}'
+}
+
+function get_fan_speed(){
+    echo "IPMI Fan speed"
+    ipmitool sensor list  |grep -E 'Fan[0-9]{1,2}\sRPM' | awk -F'|' '{print $1,$2,$4}'
 }
 
 # 函数：获取系统事件日志的最近5条记录
@@ -36,7 +41,9 @@ function main() {
     echo "=========================="
     get_ipmi_device_info
     echo "=========================="
-    get_ipmi_sensors
+    get_ipmi_temperature_sensors
+    echo "=========================="
+    get_fan_speed
     echo "=========================="
     get_ipmi_sel
     echo "=========================="
@@ -44,4 +51,5 @@ function main() {
     echo "=========================="
 }
 
+# 执行主函数
 main
