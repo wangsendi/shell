@@ -8,7 +8,7 @@ fi
 
 # 检查文件内容是否匹配CentOS 7.9
 if ! grep -q "CentOS Linux release 7.9" /etc/redhat-release; then
-    echo "操作系统不是CentOS 7.9m,本自动退出"
+    echo "操作系统不是CentOS 7.9,本自动退出"
     exit 1
 fi
 
