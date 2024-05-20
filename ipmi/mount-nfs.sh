@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-
+##有待完善
 _ip=$1
 __nfs_install() {
     if [ -n "$(systemctl status nfs | grep "active")" ]; then
         return
     fi
-    bash <(curl -fsSL https://gitcode.net/tcliuwenwen/bendian/-/raw/master/yum-mirror.sh)
+    bash <(curl -fsSL https://raw.githubusercontent.com/wangsendi/shell/main/yum/mirror.sh)
     rpm -q ipmitool >/dev/null 2>&1 || yum -y install ipmitool
     rpm -q aria2 >/dev/null 2>&1 || yum -y install aria2
     rpm -q nfs-utils >/dev/null 2>&1 || yum -y install nfs-utils
@@ -14,7 +14,7 @@ __nfs_install() {
     ADDRESS=$(ipmitool lan print | grep -v 'IP Address Source' | awk -F '.' '/^IP\sAddress/{print $2}')
 
     # 下载镜像保存到指定目录
-    aria2c -x 8 --conditional-get=true -d /nfs "http://183.134.244.180:56681/iso/centos7-bd_idc-2023-04-06-01.iso"
+    aria2c -x 8 --conditional-get=true -d /nfs "http://xxxx:56681/iso/centos7-bd_idc-2023-04-06-01.iso"
 
     echo "/nfs 10.$ADDRESS.0.0/16(ro,sync,all_squash)" >/etc/exports && exportfs -rv
     systemctl restart nfs rpcbind
