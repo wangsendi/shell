@@ -15,7 +15,7 @@ fi
 if [[ -f "/etc/yum/pluginconf.d/fastestmirror.conf" ]];then
     sed -i 's#^enabled=1$#enabled=0#g' /etc/yum/pluginconf.d/fastestmirror.conf
 fi
-sudo mv /etc/yum.repos.d/ /etc/yum.repos.d.$(date +%s).bak/
+sudo mv /etc/yum.repos.d/ /etc/yum.repos.d."$(date +%s)".bak/
 sudo mkdir -p /etc/yum.repos.d/
 sudo tee /etc/yum.repos.d/CentOS-Base.repo <<-'EOF'
 # CentOS-Base.repo
