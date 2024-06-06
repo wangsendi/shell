@@ -70,23 +70,28 @@ __main() {
         # 如果是本地回环接口，则返回
         nft add rule inet portknock input iifname "lo" return
     }
-    for item in $(seq 0 $((${#_knowk_ports[@]} - 1))); do
-        case "${item}" in
-        0)
-            nft add rule inet portknock input tcp dport "${_knowk_ports[$item]}" add @candidates_ipv4 \{ ip saddr . "${_knowk_ports[item + 1]}" timeout 10s \}
-            nft add rule inet portknock input tcp dport "${_knowk_ports[$item]}" add @candidates_ipv6 \{ ip6 saddr . "${_knowk_ports[item + 1]}" timeout 10s \}
-            ;;
-        "$((${#_knowk_ports[@]} - 1))")
-            nft add rule inet portknock input tcp dport "${_knowk_ports[$item]}" ip saddr . tcp dport @candidates_ipv4 add @clients_ipv4 '{ ip saddr timeout 10s }' log prefix '"Successful portknock: "'
-            nft add rule inet portknock input tcp dport "${_knowk_ports[$item]}" ip6 saddr . tcp dport @candidates_ipv6 add @clients_ipv6 '{ ip6 saddr timeout 10s }' log prefix '"Successful portknock: "'
-            ;;
-        *)
-            nft add rule inet portknock input tcp dport "${_knowk_ports[$item]}" ip saddr . tcp dport @candidates_ipv4 add @candidates_ipv4 \{ ip saddr . "${_knowk_ports[item + 1]}" timeout 10s \}
-            nft add rule inet portknock input tcp dport "${_knowk_ports[$item]}" ip6 saddr . tcp dport @candidates_ipv6 add @candidates_ipv6 \{ ip6 saddr . "${_knowk_ports[item + 1]}" timeout 10s \}
-            ;;
-        esac
+    if [ "${#_knowk_ports[@]}" -eq 1 ]; then
+        nft add rule inet portknock input tcp dport "${_knowk_ports[0]}" add @clients_ipv4 '{ ip saddr timeout 10s }' log prefix '"Successful portknock: "'
+        nft add rule inet portknock input tcp dport "${_knowk_ports[0]}" add @clients_ipv6 '{ ip6 saddr timeout 10s }' log prefix '"Successful portknock: "'
+    else
+        for item in $(seq 0 $((${#_knowk_ports[@]} - 1))); do
+            case "${item}" in
+            0)
+                nft add rule inet portknock input tcp dport "${_knowk_ports[$item]}" add @candidates_ipv4 \{ ip saddr . "${_knowk_ports[item + 1]}" timeout 10s \}
+                nft add rule inet portknock input tcp dport "${_knowk_ports[$item]}" add @candidates_ipv6 \{ ip6 saddr . "${_knowk_ports[item + 1]}" timeout 10s \}
+                ;;
+            "$((${#_knowk_ports[@]} - 1))")
+                nft add rule inet portknock input tcp dport "${_knowk_ports[$item]}" ip saddr . tcp dport @candidates_ipv4 add @clients_ipv4 '{ ip saddr timeout 10s }' log prefix '"Successful portknock: "'
+                nft add rule inet portknock input tcp dport "${_knowk_ports[$item]}" ip6 saddr . tcp dport @candidates_ipv6 add @clients_ipv6 '{ ip6 saddr timeout 10s }' log prefix '"Successful portknock: "'
+                ;;
+            *)
+                nft add rule inet portknock input tcp dport "${_knowk_ports[$item]}" ip saddr . tcp dport @candidates_ipv4 add @candidates_ipv4 \{ ip saddr . "${_knowk_ports[item + 1]}" timeout 10s \}
+                nft add rule inet portknock input tcp dport "${_knowk_ports[$item]}" ip6 saddr . tcp dport @candidates_ipv6 add @candidates_ipv6 \{ ip6 saddr . "${_knowk_ports[item + 1]}" timeout 10s \}
+                ;;
+            esac
+        done
+    fi
 
-    done
     {
         # 保护规则
         nft add rule inet portknock input tcp dport @guarded_ports ip saddr @clients_ipv4 counter accept
