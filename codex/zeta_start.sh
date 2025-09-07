@@ -17,7 +17,7 @@ preferred_auth_method = "apikey"
 [model_providers.azure]
 name = "azure"
 base_url = "https://api.zetatechs.com/v1"
-wire_api = "resources"
+wire_api = "responses"
 http_headers = { "Authorization" = "Bearer $ZETA_API_KEY" }
 
 
