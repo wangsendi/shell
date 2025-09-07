@@ -17,7 +17,7 @@ preferred_auth_method = "apikey"
 [model_providers.azure]
 name = "azure"
 base_url = "https://api.zetatechs.com/v1"
-wire_api = "chat"
+wire_api = "resources"
 http_headers = { "Authorization" = "Bearer $ZETA_API_KEY" }
 
 
@@ -39,6 +39,6 @@ __main() {
   rm -rf "$_home"
   __init
   __zeta_config
-  CODEX_HOME="$_home" codex --ask-for-approval never --sandbox danger-full-access --profile gpt-5
+  CODEX_HOME="$_home" codex --ask-for-approval never --sandbox danger-full-access --profile gpt-5-mini
 }
 __main
